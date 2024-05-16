@@ -1,39 +1,40 @@
-package main
+package  main
 
-import (
-	"fmt"
-	"math"
-)
+import "fmt"
 
 func main() {
-	fmt.Println(isPalindrome(1234321))
+  response :=romanToInt("MCMXCIV")
+
+  fmt.Println(response)
+
 }
 
-func isPalindrome(x int) bool {
+func romanToInt(s string) int {
 
-	if x < 0 {
-		return false
-	}
+	romanMap := map[string]int{"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
 
-	if x < 10 {
-		return true
-	}
+	var sum int = 0
+	var acc int = 0
 
-	var nrOfDigits = int(math.Floor(math.Log10(float64(x))))
+	for i := len(s) - 1; i >= 0; i-- {
 
-	for nrOfDigits > 0 {
+    fmt.Println("s[i]:",string(s[i]))
 
-		left := x / int(math.Pow10(nrOfDigits))
-		right := x % 10
+		map_value := romanMap[string(s[i])]
 
-		if left != right {
-			return false
+		if acc > map_value  {
+			sum -= map_value
+			acc = 0
+		} else {
+			sum += map_value
+			acc += map_value
+      fmt.Println(acc,"<", s[i])
+      fmt.Println("sum:",sum)
+      fmt.Println("acc:",acc)
 		}
 
-		x = x / 10
-		x = x % int(math.Pow10(nrOfDigits-1))
-
-		nrOfDigits -= 2
 	}
-	return true
+
+	return sum
 }
+
