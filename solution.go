@@ -2,64 +2,24 @@ package main
 
 import (
 	"fmt"
-	"sync"
 )
 
-type stack struct {
-	lock  *sync.Mutex
-	queue []string
-}
+func twoSum(nums []int, target int) []int {
+	var mapNums = make(map[int]int)
 
-func (s *stack) Push(parentheses string) {
-	s.lock.Lock()
+	for idx, value := range nums {
 
-	s.queue = append(s.queue, parentheses)
+		valor, ok := mapNums[target-value]
+    if ok {
+      return [] int {idx,valor}
+    } 
 
-	defer s.lock.Unlock()
-}
-
-func (s *stack) Pop() string {
-	s.lock.Lock()
-
-	lenght := len(s.queue)
-
-	if lenght == 0 {
-		return ""
+    mapNums[value]=idx
+    
 	}
-
-	lastParentheses := s.queue[lenght-1]
-
-	s.queue = s.queue[:lenght-1]
-
-	defer s.lock.Unlock()
-
-	return lastParentheses
-}
-
-func isValid(s string) bool {
-	stackParenthese := stack{lock: &sync.Mutex{}, queue: []string{}}
-
-	mapRight := map[string]string{"{": "}", "[": "]", "(": ")"}
-	mapLeft := map[string]string{"}": "{", "]": "[", ")": "("}
-
-	for i := 0; i < len(s); i++ {
-		_, ok := mapRight[string(s[i])]
-
-		if ok {
-			stackParenthese.Push(string(s[i]))
-		} else {
-			righParentheses := stackParenthese.Pop()
-			if righParentheses != mapLeft[string(s[i])] {
-				return false
-			}
-		}
-	}
-	if stackParenthese.Pop() != "" {
-		return false
-	}
-	return true
+  return nil
 }
 
 func main() {
-	fmt.Println(isValid("(("))
+	fmt.Println(twoSum([]int{2, 7, 11, 15}, 9))
 }
