@@ -1,40 +1,29 @@
-package  main
+package main
 
-import "fmt"
+import (
+	"fmt"
+	"regexp"
+	"strings"
+)
 
 func main() {
-  response :=romanToInt("MCMXCIV")
 
-  fmt.Println(response)
-
+	emails := []string{"ludwinss@gmail.com", "ludwin.flores.ma+mani.f@gmail.com", "lll@gm.ail.com", "ff@gmail.com"}
+	fmt.Println(numUniqueEmails(emails))
 }
 
-func romanToInt(s string) int {
+// NOTA Si no hubiera usado la libreria regexp, la solucion seria mas rapida
+func numUniqueEmails(emails []string) int {
+	pattern := `\+.*`
+	regExp, _ := regexp.Compile(pattern)
+	emailMap := make(map[string]bool)
 
-	romanMap := map[string]int{"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
-
-	var sum int = 0
-	var acc int = 0
-
-	for i := len(s) - 1; i >= 0; i-- {
-
-    fmt.Println("s[i]:",string(s[i]))
-
-		map_value := romanMap[string(s[i])]
-
-		if acc > map_value  {
-			sum -= map_value
-			acc = 0
-		} else {
-			sum += map_value
-			acc += map_value
-      fmt.Println(acc,"<", s[i])
-      fmt.Println("sum:",sum)
-      fmt.Println("acc:",acc)
-		}
-
+	for i := 0; i < len(emails); i++ {
+		email := strings.Split(emails[i], "@")
+		local, domain := email[0], email[1]
+		local = strings.ReplaceAll(local, ".", "")
+		local = regExp.ReplaceAllString(local, "")
+		emailMap[local+"@"+domain] = true
 	}
-
-	return sum
+	return len(emailMap)
 }
-
