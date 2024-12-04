@@ -7,18 +7,18 @@ fn main() {
 
 pub fn max_depth(s: String) -> i32 {
     let mut max_value: i32 = 0;
-    let mut stack_parentheses = Vec::new();
+    let mut current_depth = 0;
 
-    for strin in s.chars() {
-        if strin == '(' {
-            stack_parentheses.push(strin);
-        }
-        if strin == ')' {
-            stack_parentheses.pop();
-        }
-
-        if max_value < stack_parentheses.len() as i32 {
-            max_value = stack_parentheses.len() as i32;
+    for char in s.chars() {
+        match char {
+            '(' => {
+                current_depth += 1;
+                max_value = max_value.max(current_depth);
+            }
+            ')' => {
+                current_depth -= 1;
+            }
+            _ => continue
         }
     }
     max_value
