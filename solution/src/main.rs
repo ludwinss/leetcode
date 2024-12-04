@@ -1,27 +1,25 @@
 fn main() {
-    let num = vec![2, 1, 5];
-    let k = 806;
+    let num = String::from("(1)+((2))+(((3)))");
 
-    let solutions = add_to_array_form(num, k);
+    let solutions = max_depth(num);
     println!("{:?}", solutions);
 }
 
-pub fn add_to_array_form(num: Vec<i32>, k: i32) -> Vec<i32> {
-    let mut carry = k;
-    let mut result = Vec::new();
+pub fn max_depth(s: String) -> i32 {
+    let mut max_value: i32 = 0;
+    let mut stack_parentheses = Vec::new();
 
-    for digit in num.iter().rev() {
-        carry += *digit;
-        result.push(carry % 10);
-        carry /= 10;
+    for strin in s.chars() {
+        if strin == '(' {
+            stack_parentheses.push(strin);
+        }
+        if strin == ')' {
+            stack_parentheses.pop();
+        }
+
+        if max_value < stack_parentheses.len() as i32 {
+            max_value = stack_parentheses.len() as i32;
+        }
     }
-
-    while carry > 0 {
-        result.push(carry % 10);
-        carry /= 10;
-    }
-
-    result.reverse();
-
-    result
+    max_value
 }
