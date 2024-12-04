@@ -1,25 +1,27 @@
 fn main() {
-    let num = String::from("(1)+((2))+(((3)))");
+    let input = vec![1, 9, 9];
 
-    let solutions = max_depth(num);
+    let solutions = plus_one(input);
     println!("{:?}", solutions);
 }
 
-pub fn max_depth(s: String) -> i32 {
-    let mut max_value: i32 = 0;
-    let mut current_depth = 0;
+pub fn plus_one(digits: Vec<i32>) -> Vec<i32> {
+    let mut carry = 1;
+    let mut result: Vec<i32> = digits
+        .into_iter()
+        .rev()
+        .map(|digit| {
+            let sum = digit + carry;
+            carry = sum / 10;
+            sum % 10
+        })
+        .collect();
 
-    for char in s.chars() {
-        match char {
-            '(' => {
-                current_depth += 1;
-                max_value = max_value.max(current_depth);
-            }
-            ')' => {
-                current_depth -= 1;
-            }
-            _ => continue
-        }
+    if carry > 0 {
+        result.push(carry);
     }
-    max_value
+
+    result.reverse();
+
+    result
 }
