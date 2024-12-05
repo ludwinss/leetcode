@@ -1,27 +1,43 @@
 fn main() {
-    let input = vec![1, 9, 9];
+    let input = vec![
+        "flower".to_string(),
+        "flow".to_string(),
+        "flight".to_string(),
+    ];
 
-    let solutions = plus_one(input);
+    let solutions = longest_common_prefix(input);
     println!("{:?}", solutions);
 }
 
-pub fn plus_one(digits: Vec<i32>) -> Vec<i32> {
-    let mut carry = 1;
-    let mut result: Vec<i32> = digits
-        .into_iter()
-        .rev()
-        .map(|digit| {
-            let sum = digit + carry;
-            carry = sum / 10;
-            sum % 10
-        })
-        .collect();
-
-    if carry > 0 {
-        result.push(carry);
+pub fn longest_common_prefix(strs: Vec<String>) -> String {
+    if strs.is_empty() {
+        return "".to_string();
     }
 
-    result.reverse();
+    if strs.len() == 1 {
+        return strs[0].to_string();
+    }
 
-    result
+    let mut order_vect_prefix: Vec<String> = strs.clone();
+
+    order_vect_prefix.sort_by_key(|chars| chars.len());
+
+    let word = String::from(order_vect_prefix[0].clone());
+
+    let mut idx_common = 0;
+
+    for idx_next_char in (1..=order_vect_prefix.len() + 1).rev() {
+        order_vect_prefix.iter().for_each(|string_find| {
+            let word_slice: String = string_find.chars().take(idx_next_char).collect();
+            if word_slice == word.chars().take(idx_next_char).collect::<String>() {
+                idx_common = idx_next_char;
+            } else {
+                idx_common = 0;
+            }
+        });
+        if idx_common != 0 {
+            break;
+        }
+    }
+    word.chars().take(idx_common).collect::<String>()
 }
