@@ -1,42 +1,34 @@
-use std::collections::HashMap;
-
 fn main() {
-    let input = vec![4, 1, 2];
-    let input2 = vec![1, 3, 4, 2];
+    let input = vec![1, 2, 1];
 
-    assert_eq!(next_greater_element(input, input2), vec![-1, 3, -1]);
+    assert_eq!(next_greater_element(input), vec![2, -1, 2]);
 
-    let input = vec![2, 4];
-    let input2 = vec![1, 2, 3, 4];
+    let input = vec![1, 2, 3, 4, 3];
 
-    assert_eq!(next_greater_element(input, input2), vec![3, -1]);
+    assert_eq!(next_greater_element(input), vec![2, 3, 4, -1, 4]);
 }
 
-pub fn next_greater_element(nums1: Vec<i32>, nums2: Vec<i32>) -> Vec<i32> {
-    let mut memoize_result: HashMap<i32, i32> = HashMap::new();
-    let mut monotic_stask: Vec<i32> = Vec::new();
+pub fn next_greater_element(nums1: Vec<i32>) -> Vec<i32> {
+    let circle_elements = Vec::from([nums1.clone(), nums1.clone()].concat());
+    let mut stack: Vec<i32> = vec![];
+    let mut result: Vec<i32> = vec![-1; circle_elements.len()];
 
-    for &num_to_compare in nums2.iter().rev() {
-        while let Some(&header_value) = monotic_stask.last() {
-            println!("header_value: {:?}, num_to_compare: {:?}", header_value, num_to_compare);
-            if header_value <= num_to_compare {
-                monotic_stask.pop()
+    for (idx, &num) in circle_elements.iter().enumerate().rev() {
+        while let Some(&header_value) = stack.last() {
+            if header_value <= num {
+                stack.pop();
             } else {
                 break;
-            };
+            }
         }
 
-        let next_greater = if let Some(&header_value) = monotic_stask.last() {
-            header_value
-        } else {
-            -1
-        };
+        if let Some(&top) = stack.last() {
+            result[idx] = top
+        }
 
-        memoize_result.insert(num_to_compare, next_greater);
-
-        monotic_stask.push(num_to_compare);
+        stack.push(num)
     }
-    println!("-====={:?}", memoize_result);
 
-    nums1.iter().map(|&num| *memoize_result.get(&num).unwrap_or(&-1)).collect()
+    result.truncate(nums1.len());
+    result
 }
