@@ -1,30 +1,42 @@
-use std::collections::HashSet;
+use std::collections::HashMap;
 
 fn main() {
-    let ex1 = vec![46, 8, 2, 4, 1, 4, 10, 2, 4, 10, 2, 5, 7, 3, 1];
-    let ex2 = vec![1, 2, 3, 2, 5];
-    let ex3 = vec![3, 4, 5, 1, 12, 14, 13];
-    let ex4 = vec![38];
-    let ex5 = vec![1, 2, 3, 9, 2, 10, 8, 3, 10, 2];
+    let input = vec![4, 1, 2];
+    let input2 = vec![1, 3, 4, 2];
 
-    assert_eq!(missing_integer(ex1), 47);
-    assert_eq!(missing_integer(ex2), 6);
-    assert_eq!(missing_integer(ex3), 15);
-    assert_eq!(missing_integer(ex4), 39);
-    assert_eq!(missing_integer(ex5), 6);
+    assert_eq!(next_greater_element(input, input2), vec![-1, 3, -1]);
+
+    let input = vec![2, 4];
+    let input2 = vec![1, 2, 3, 4];
+
+    assert_eq!(next_greater_element(input, input2), vec![3, -1]);
 }
 
-pub fn missing_integer(x: Vec<i32>) -> i32 {
-    // Honestly the problem sucks
-    let a = x.iter().cloned().collect::<HashSet<_>>();
-    let mut i = 1;
-    let mut total = x[0];
-    while i < x.len() && x[i] == x[i - 1] + 1 {
-        total += x[i];
-        i += 1;
+pub fn next_greater_element(nums1: Vec<i32>, nums2: Vec<i32>) -> Vec<i32> {
+    let mut memoize_result: HashMap<i32, i32> = HashMap::new();
+    let mut monotic_stask: Vec<i32> = Vec::new();
+
+    for &num_to_compare in nums2.iter().rev() {
+        while let Some(&header_value) = monotic_stask.last() {
+            println!("header_value: {:?}, num_to_compare: {:?}", header_value, num_to_compare);
+            if header_value <= num_to_compare {
+                monotic_stask.pop()
+            } else {
+                break;
+            };
+        }
+
+        let next_greater = if let Some(&header_value) = monotic_stask.last() {
+            header_value
+        } else {
+            -1
+        };
+
+        memoize_result.insert(num_to_compare, next_greater);
+
+        monotic_stask.push(num_to_compare);
     }
-    while a.contains(&total) {
-        total += 1
-    }
-    total
+    println!("-====={:?}", memoize_result);
+
+    nums1.iter().map(|&num| *memoize_result.get(&num).unwrap_or(&-1)).collect()
 }
