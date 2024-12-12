@@ -24,64 +24,30 @@ fn main() {
 }
 
 pub fn my_atoi(s: String) -> i32 {
-    let mut is_initiate: bool = false;
+    let s_trim = s.trim_start();
     let mut result: i32 = 0;
     let mut is_negative: bool = false;
 
-    for char in s.chars() {
-        if char.eq(&' ') {
-            if is_initiate {
-                break;
-            }
-            continue;
-        }
+    for (idx, char) in s_trim.chars().enumerate() {
+        match char {
+            '-' if idx == 0 => is_negative = true,
 
-        if char.eq(&'0')
-            || char.eq(&'1')
-            || char.eq(&'2')
-            || char.eq(&'3')
-            || char.eq(&'4')
-            || char.eq(&'5')
-            || char.eq(&'6')
-            || char.eq(&'7')
-            || char.eq(&'8')
-            || char.eq(&'9')
-        {
-            let value_parse = char.to_string().parse::<i32>().unwrap_or(0);
+            '+' if idx == 0 => continue,
 
-            if let Some(value_to_mul) = result.checked_mul(10) {
-                if let Some(value_to_sum) = value_to_mul.checked_add(value_parse) {
-                    result = value_to_sum;
-                } else {
-                    return if is_negative {
-                        i32::min_value()
-                    } else {
-                        i32::max_value()
-                    };
+            '0'..='9' => {
+                let digit = (char as u8 - b'0') as i32;
+
+                result = match result
+                    .checked_mul(10)
+                    .and_then(|val| val.checked_add(digit))
+                {
+                    Some(val) => val,
+                    None => return if is_negative { i32::MIN } else { i32::MAX },
                 }
-            } else {
-                return if is_negative {
-                    i32::min_value()
-                } else {
-                    i32::max_value()
-                };
             }
-        } else if char.eq(&'-') {
-            if is_initiate {
-                break;
-            }
-            is_negative = true;
-        } else if char.eq(&'+') {
-            if is_initiate {
-                break;
-            }
-            is_negative = false;
-        } else {
-            break;
+            _ => break,
         }
-        is_initiate = true;
     }
-    println!("result: {}", result);
 
     result * if is_negative { -1 } else { 1 }
 }
