@@ -10,24 +10,26 @@ fn main() {
 }
 
 pub fn reverse(x: i32) -> i32 {
-    let is_negative = x < 0;
+    let mut x_abs = x.abs();
+    let mut vec_bytes = [0_u8; 10];
 
-    let x = x.abs();
+    let mut idx = 0;
 
-    let x_invert: String = x
-        .to_string()
-        .chars()
-        .rev()
-        .fold(String::new(), |mut acc, char| {
-            acc.push(char);
-            acc
-        });
-
-    let x_invert = x_invert.parse::<i32>().unwrap_or(0);
-
-    if is_negative {
-        return x_invert * -1;
+    while x_abs > 0 {
+        vec_bytes[idx] = (x_abs % 10) as u8;
+        x_abs /= 10;
+        idx += 1;
     }
 
-    x_invert
+    for j in 0..idx {
+        if let Some(k) = x_abs.checked_mul(10) {
+            if let Some(l) = k.checked_add(vec_bytes[j] as i32) {
+                x_abs = l;
+                continue;
+            }
+        };
+        return 0;
+    }
+
+    x_abs * if x < 0 { -1 } else { 1 }
 }
