@@ -1,53 +1,37 @@
 fn main() {
-    let input = "42".to_string();
-    assert_eq!(my_atoi(input), 42);
+    let input = vec![73, 74, 75, 71, 69, 72, 76, 73];
+    assert_eq!(daily_temperatures(input), vec![1, 1, 4, 2, 1, 1, 0, 0]);
 
-    let input = "   -42".to_string();
-    assert_eq!(my_atoi(input), -42);
+    let input = vec![30, 40, 50, 60];
+    assert_eq!(daily_temperatures(input), vec![1, 1, 1, 0]);
 
-    let input = "4193 with words".to_string();
-    assert_eq!(my_atoi(input), 4193);
-
-    let input = "words and 987".to_string();
-    assert_eq!(my_atoi(input), 0);
-
-    let input = "0-1".to_string();
-    assert_eq!(my_atoi(input), 0);
-
-    let input = "+1".to_string();
-    assert_eq!(my_atoi(input), 1);
-
-    let input = "   +0 123".to_string();
-    assert_eq!(my_atoi(input), 0);
+    let input = vec![30, 60, 90];
+    assert_eq!(daily_temperatures(input), vec![1, 1, 0]);
 
     println!("All test passed!");
 }
+pub fn daily_temperatures(temperatures: Vec<i32>) -> Vec<i32> {
+    let mut result = vec![0; temperatures.len()];
+    let mut stack: Vec<(i32, i32)> = Vec::with_capacity(temperatures.len());
 
-pub fn my_atoi(s: String) -> i32 {
-    let s_trim = s.trim_start();
-    let mut result: i32 = 0;
-    let mut is_negative: bool = false;
-
-    for (idx, char) in s_trim.chars().enumerate() {
-        match char {
-            '-' if idx == 0 => is_negative = true,
-
-            '+' if idx == 0 => continue,
-
-            '0'..='9' => {
-                let digit = (char as u8 - b'0') as i32;
-
-                result = match result
-                    .checked_mul(10)
-                    .and_then(|val| val.checked_add(digit))
-                {
-                    Some(val) => val,
-                    None => return if is_negative { i32::MIN } else { i32::MAX },
-                }
+    for (idx, &temperature) in temperatures.iter().rev().enumerate() {
+        while let Some(&greatest_temperature) = stack.last() {
+            if greatest_temperature.1 <= temperature {
+                stack.pop();
+            } else {
+                break;
             }
-            _ => break,
         }
-    }
 
-    result * if is_negative { -1 } else { 1 }
+        if let Some(&greatest_temperature) = stack.last() {
+            result[idx] = idx as i32 - greatest_temperature.0;
+        }
+
+        stack.push((idx as i32, temperature));
+    }
+    result.reverse();
+
+    println!("{:?}", result);
+
+    result
 }
