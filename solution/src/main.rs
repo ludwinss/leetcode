@@ -1,7 +1,5 @@
-use std::collections::HashMap;
-
 fn main() {
-    let g = vec![1, 2, 3];
+    let g = vec![1, 3, 2];
     let s = vec![1, 1];
     assert_eq!(find_content_children(g, s), 1);
 
@@ -13,23 +11,24 @@ fn main() {
     let s = vec![1, 3, 5];
     assert_eq!(find_content_children(g, s), 3);
 
+    let g = vec![10, 9, 8, 7];
+    let s = vec![5, 6, 7, 8];
+    assert_eq!(find_content_children(g, s), 2);
+
     println!("All test passed!");
 }
-pub fn find_content_children(g: Vec<i32>, s: Vec<i32>) -> i32 {
-    let mut map_child: HashMap<i32, bool> = HashMap::new();
-    let mut result = 0;
+pub fn find_content_children(mut g: Vec<i32>, mut s: Vec<i32>) -> i32 {
+    g.sort_unstable();
+    s.sort_unstable();
 
-    for child in g {
-        map_child.insert(child, false);
-    }
+    let mut idx_g = 0;
+    let mut idx_s = 0;
 
-    for cookie in &s {
-        if let Some(&satisfied) = map_child.get(cookie) {
-            if !satisfied {
-                result += 1;
-                map_child.insert(*cookie, true);
-            }
+    while idx_g < g.len() && idx_s < s.len() {
+        if s[idx_s] >= g[idx_g] {
+            idx_g += 1;
         }
+        idx_s += 1;
     }
-    result
+    idx_g as i32
 }
