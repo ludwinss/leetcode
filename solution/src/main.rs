@@ -1,37 +1,35 @@
+use std::collections::HashMap;
+
 fn main() {
-    let input = vec![73, 74, 75, 71, 69, 72, 76, 73];
-    assert_eq!(daily_temperatures(input), vec![1, 1, 4, 2, 1, 1, 0, 0]);
+    let g = vec![1, 2, 3];
+    let s = vec![1, 1];
+    assert_eq!(find_content_children(g, s), 1);
 
-    let input = vec![30, 40, 50, 60];
-    assert_eq!(daily_temperatures(input), vec![1, 1, 1, 0]);
+    let g = vec![1, 2];
+    let s = vec![1, 2, 3];
+    assert_eq!(find_content_children(g, s), 2);
 
-    let input = vec![30, 60, 90];
-    assert_eq!(daily_temperatures(input), vec![1, 1, 0]);
-
-    let input = vec![89, 62, 70, 58, 47, 47, 46, 76, 100, 70];
-    assert_eq!(
-        daily_temperatures(input),
-        vec![8, 1, 5, 4, 3, 2, 1, 1, 0, 0]
-    );
+    let g = vec![1, 2, 3, 4, 5, 6];
+    let s = vec![1, 3, 5];
+    assert_eq!(find_content_children(g, s), 3);
 
     println!("All test passed!");
 }
-pub fn daily_temperatures(temperatures: Vec<i32>) -> Vec<i32> {
-    let mut result = vec![0; temperatures.len()];
-    let mut stack: Vec<usize> = Vec::with_capacity(temperatures.len());
+pub fn find_content_children(g: Vec<i32>, s: Vec<i32>) -> i32 {
+    let mut map_child: HashMap<i32, bool> = HashMap::new();
+    let mut result = 0;
 
-    for (idx, &temperature) in temperatures.iter().enumerate() {
-        while let Some(&greatest_idx) = stack.last() {
-            if temperatures[greatest_idx] < temperature {
-                result[greatest_idx] = (idx - greatest_idx) as i32;
-                stack.pop();
-            } else {
-                break;
-            }
-        }
-
-        stack.push(idx);
+    for child in g {
+        map_child.insert(child, false);
     }
 
+    for cookie in &s {
+        if let Some(&satisfied) = map_child.get(cookie) {
+            if !satisfied {
+                result += 1;
+                map_child.insert(*cookie, true);
+            }
+        }
+    }
     result
 }
