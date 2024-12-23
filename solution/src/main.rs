@@ -1,34 +1,26 @@
 fn main() {
-    let g = vec![1, 3, 2];
-    let s = vec![1, 1];
-    assert_eq!(find_content_children(g, s), 1);
+    let input = "Hello World".to_string();
+    assert_eq!(length_of_last_word(input), 5);
 
-    let g = vec![1, 2];
-    let s = vec![1, 2, 3];
-    assert_eq!(find_content_children(g, s), 2);
+    let input = "   fly me   to   the moon  ".to_string();
+    assert_eq!(length_of_last_word(input), 4);
 
-    let g = vec![1, 2, 3, 4, 5, 6];
-    let s = vec![1, 3, 5];
-    assert_eq!(find_content_children(g, s), 3);
-
-    let g = vec![10, 9, 8, 7];
-    let s = vec![5, 6, 7, 8];
-    assert_eq!(find_content_children(g, s), 2);
+    let input = "luffy is still joyboy".to_string();
+    assert_eq!(length_of_last_word(input), 6);
 
     println!("All test passed!");
 }
-pub fn find_content_children(mut g: Vec<i32>, mut s: Vec<i32>) -> i32 {
-    g.sort_unstable();
-    s.sort_unstable();
+pub fn length_of_last_word(s: String) -> i32 {
+    let array_bytes = s.trim_end().as_bytes();
 
-    let mut idx_g = 0;
-    let mut idx_s = 0;
+    let mut i = array_bytes.len() - 1;
 
-    while idx_g < g.len() && idx_s < s.len() {
-        if s[idx_s] >= g[idx_g] {
-            idx_g += 1;
+    while i > 0 {
+        i -= 1;
+        if array_bytes[i] == b' ' {
+            return (array_bytes.len() - i - 1) as i32;
         }
-        idx_s += 1;
     }
-    idx_g as i32
+
+    0
 }
