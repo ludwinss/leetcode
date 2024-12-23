@@ -11,16 +11,7 @@ fn main() {
     println!("All test passed!");
 }
 pub fn length_of_last_word(s: String) -> i32 {
-    let array_bytes = s.trim_end().as_bytes();
-
-    let mut i = array_bytes.len() - 1;
-
-    while i > 0 {
-        i -= 1;
-        if array_bytes[i] == b' ' {
-            return (array_bytes.len() - i - 1) as i32;
-        }
-    }
-
-    0
+    s.split_whitespace()
+        .last()
+        .map_or(0, |last_word| last_word.len() as i32)
 }
