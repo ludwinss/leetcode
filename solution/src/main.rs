@@ -1,17 +1,41 @@
 fn main() {
-    let input = "Hello World".to_string();
-    assert_eq!(length_of_last_word(input), 5);
+    let input = 2;
+    assert_eq!(my_sqrt(input), 1);
 
-    let input = "   fly me   to   the moon  ".to_string();
-    assert_eq!(length_of_last_word(input), 4);
+    let input = 8;
+    assert_eq!(my_sqrt(input), 2);
 
-    let input = "luffy is still joyboy".to_string();
-    assert_eq!(length_of_last_word(input), 6);
+    let input = 10;
+    assert_eq!(my_sqrt(input), 3);
+
+    let input = 2147395599;
+    assert_eq!(my_sqrt(input), 46339);
 
     println!("All test passed!");
 }
-pub fn length_of_last_word(s: String) -> i32 {
-    s.split_whitespace()
-        .last()
-        .map_or(0, |last_word| last_word.len() as i32)
+
+pub fn my_sqrt(x: i32) -> i32 {
+    if x == 0 {
+        return 0;
+    }
+
+    let mut guess = x as f64 / 2.0;
+
+    loop {
+        let next_guess = (guess + x as f64 / guess) / 2.0;
+
+        if (next_guess - guess).abs() < 1e-6 {
+            break;
+        }
+
+        guess = next_guess;
+    }
+
+    let result = guess as i32;
+
+    if result * result > x {
+        result - 1
+    } else {
+        result
+    }
 }
