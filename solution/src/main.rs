@@ -1,41 +1,30 @@
 fn main() {
-    let input = 2;
-    assert_eq!(my_sqrt(input), 1);
-
-    let input = 8;
-    assert_eq!(my_sqrt(input), 2);
-
-    let input = 10;
-    assert_eq!(my_sqrt(input), 3);
-
-    let input = 2147395599;
-    assert_eq!(my_sqrt(input), 46339);
+    assert_eq!(is_perfect_square(16), true);
+    assert_eq!(is_perfect_square(14), false);
+    assert_eq!(is_perfect_square(1), true);
+    assert_eq!(is_perfect_square(4), true);
+    assert_eq!(is_perfect_square(2147395600), true);
+    assert_eq!(is_perfect_square(2_147_483_647), false);
 
     println!("All test passed!");
 }
+pub fn is_perfect_square(num: i32) -> bool {
+    let mut left = 1;
+    let mut right = num;
 
-pub fn my_sqrt(x: i32) -> i32 {
-    if x == 0 {
-        return 0;
-    }
+    while left <= right {
+        let mid = left + (right - left) / 2;
 
-    let mut guess = x as f64 / 2.0;
+        let square = mid as i64 * mid as i64;
 
-    loop {
-        let next_guess = (guess + x as f64 / guess) / 2.0;
-
-        if (next_guess - guess).abs() < 1e-6 {
-            break;
+        if square == num as i64 {
+            return true;
+        } else if square > num as i64 {
+            right = mid - 1;
+        } else {
+            left = mid + 1;
         }
-
-        guess = next_guess;
     }
 
-    let result = guess as i32;
-
-    if result * result > x {
-        result - 1
-    } else {
-        result
-    }
+    false
 }
