@@ -1,43 +1,35 @@
 fn main() {
-    assert_eq!(int_to_roman(58), "LVIII");
-    assert_eq!(int_to_roman(19), "XIX");
-    assert_eq!(int_to_roman(4), "IV");
-    assert_eq!(int_to_roman(9), "IX");
-    assert_eq!(int_to_roman(45), "XLV");
-    assert_eq!(int_to_roman(40), "XL");
-    assert_eq!(int_to_roman(91), "XCI");
-    assert_eq!(int_to_roman(3749), "MMMDCCXLIX");
-    assert_eq!(int_to_roman(1994), "MCMXCIV");
-    assert_eq!(int_to_roman(3999), "MMMCMXCIX");
+    assert_eq!(is_happy(19), true);
+    assert_eq!(is_happy(2), false);
 
     println!("All test passed!");
 }
 
-pub fn int_to_roman(mut num: i32) -> String {
-    let romans = [
-        (1000, "M"),
-        (900, "CM"),
-        (500, "D"),
-        (400, "CD"),
-        (100, "C"),
-        (90, "XC"),
-        (50, "L"),
-        (40, "XL"),
-        (10, "X"),
-        (9, "IX"),
-        (5, "V"),
-        (4, "IV"),
-        (1, "I"),
-    ];
+pub fn is_happy(mut n: i32) -> bool {
+    let mut last_value = 0;
+    let mut is_first = true;
+    loop {
+        let mut tmp_value = 0;
 
-    let mut results = String::new();
+        while n > 0 {
+            let digit = n % 10;
+            tmp_value += digit * digit;
+            n /= 10;
+        }
 
-    for &(val_roman, roman) in &romans {
-        while val_roman <= num {
-            num -= val_roman;
-            results.push_str(roman);
+        n = tmp_value;
+
+        if last_value == n {
+            return false;
+        }
+
+        if is_first {
+            last_value = tmp_value;
+            is_first = false;
+        }
+
+        if tmp_value == 1 {
+            return true;
         }
     }
-
-    results
 }
