@@ -1,30 +1,68 @@
+use std::{cmp::Ordering, collections::HashMap};
+
 fn main() {
-    assert_eq!(is_perfect_square(16), true);
-    assert_eq!(is_perfect_square(14), false);
-    assert_eq!(is_perfect_square(1), true);
-    assert_eq!(is_perfect_square(4), true);
-    assert_eq!(is_perfect_square(2147395600), true);
-    assert_eq!(is_perfect_square(2_147_483_647), false);
+    assert_eq!(int_to_roman(58), "LVIII");
+    assert_eq!(int_to_roman(19), "XIX");
+    assert_eq!(int_to_roman(4), "IV");
+    assert_eq!(int_to_roman(9), "IX");
+    assert_eq!(int_to_roman(45), "XLV");
+    assert_eq!(int_to_roman(40), "XL");
+    assert_eq!(int_to_roman(91), "XCI");
+    assert_eq!(int_to_roman(3749), "MMMDCCXLIX");
+    assert_eq!(int_to_roman(1994), "MCMXCIV");
+    assert_eq!(int_to_roman(3999), "MMMCMXCIX");
 
     println!("All test passed!");
 }
-pub fn is_perfect_square(num: i32) -> bool {
-    let mut left = 1;
-    let mut right = num;
 
-    while left <= right {
-        let mid = left + (right - left) / 2;
+pub fn int_to_roman(mut num: i32) -> String {
+    let map_romans = HashMap::from([
+        (1, ("I", "V")),
+        (2, ("X", "L")),
+        (3, ("C", "D")),
+        (4, ("M", "")),
+    ]);
 
-        let square = mid as i64 * mid as i64;
+    let mut idx = 1;
 
-        if square == num as i64 {
-            return true;
-        } else if square > num as i64 {
-            right = mid - 1;
-        } else {
-            left = mid + 1;
+    let mut results = "".to_string();
+
+    while num > 0 {
+        let digit = num % 10;
+
+        let (left, right) = map_romans.get(&idx).unwrap();
+
+        num /= 10;
+
+        idx += 1;
+
+        match digit.cmp(&5) {
+            Ordering::Less => {
+                if digit == 4 {
+                    results.insert_str(0, &right);
+                    results.insert_str(0, &left);
+                } else {
+                    results.insert_str(0, &left.repeat((digit) as usize));
+                }
+                continue;
+            }
+            Ordering::Equal => {
+                results.insert_str(0, &right);
+                continue;
+            }
+            Ordering::Greater => {
+                if digit == 9 {
+                    let (left_b, _) = map_romans.get(&(idx)).unwrap();
+                    results.insert_str(0, &left_b);
+                    results.insert_str(0, &left);
+                } else {
+                    results.insert_str(0, &left.repeat((digit - 5) as usize));
+                    results.insert_str(0, &right);
+                }
+                continue;
+            }
         }
     }
 
-    false
+    results
 }
