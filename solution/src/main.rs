@@ -1,5 +1,3 @@
-use std::{cmp::Ordering, collections::HashMap};
-
 fn main() {
     assert_eq!(int_to_roman(58), "LVIII");
     assert_eq!(int_to_roman(19), "XIX");
@@ -16,51 +14,28 @@ fn main() {
 }
 
 pub fn int_to_roman(mut num: i32) -> String {
-    let map_romans = HashMap::from([
-        (1, ("I", "V")),
-        (2, ("X", "L")),
-        (3, ("C", "D")),
-        (4, ("M", "")),
-    ]);
+    let romans = [
+        (1000, "M"),
+        (900, "CM"),
+        (500, "D"),
+        (400, "CD"),
+        (100, "C"),
+        (90, "XC"),
+        (50, "L"),
+        (40, "XL"),
+        (10, "X"),
+        (9, "IX"),
+        (5, "V"),
+        (4, "IV"),
+        (1, "I"),
+    ];
 
-    let mut idx = 1;
+    let mut results = String::new();
 
-    let mut results = "".to_string();
-
-    while num > 0 {
-        let digit = num % 10;
-
-        let (left, right) = map_romans.get(&idx).unwrap();
-
-        num /= 10;
-
-        idx += 1;
-
-        match digit.cmp(&5) {
-            Ordering::Less => {
-                if digit == 4 {
-                    results.insert_str(0, &right);
-                    results.insert_str(0, &left);
-                } else {
-                    results.insert_str(0, &left.repeat((digit) as usize));
-                }
-                continue;
-            }
-            Ordering::Equal => {
-                results.insert_str(0, &right);
-                continue;
-            }
-            Ordering::Greater => {
-                if digit == 9 {
-                    let (left_b, _) = map_romans.get(&(idx)).unwrap();
-                    results.insert_str(0, &left_b);
-                    results.insert_str(0, &left);
-                } else {
-                    results.insert_str(0, &left.repeat((digit - 5) as usize));
-                    results.insert_str(0, &right);
-                }
-                continue;
-            }
+    for &(val_roman, roman) in &romans {
+        while val_roman <= num {
+            num -= val_roman;
+            results.push_str(roman);
         }
     }
 
