@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 fn main() {
     assert_eq!(is_happy(19), true);
     assert_eq!(is_happy(2), false);
@@ -6,8 +8,7 @@ fn main() {
 }
 
 pub fn is_happy(mut n: i32) -> bool {
-    let mut last_value = 0;
-    let mut is_first = true;
+    let mut memo_digits = HashSet::new();
     loop {
         let mut tmp_value = 0;
 
@@ -17,19 +18,16 @@ pub fn is_happy(mut n: i32) -> bool {
             n /= 10;
         }
 
-        n = tmp_value;
-
-        if last_value == n {
-            return false;
-        }
-
-        if is_first {
-            last_value = tmp_value;
-            is_first = false;
-        }
-
         if tmp_value == 1 {
             return true;
         }
+
+        if memo_digits.contains(&tmp_value) {
+            return false;
+        }
+
+        memo_digits.insert(tmp_value);
+
+        n = tmp_value;
     }
 }
