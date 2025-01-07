@@ -1,33 +1,13 @@
-use std::collections::HashSet;
-
 fn main() {
-    assert_eq!(is_happy(19), true);
-    assert_eq!(is_happy(2), false);
+    assert_eq!(add_binary("11".to_string(), "1".to_string()), "100");
+    assert_eq!(add_binary("1010".to_string(), "1011".to_string()), "10101");
 
     println!("All test passed!");
 }
 
-pub fn is_happy(mut n: i32) -> bool {
-    let mut memo_digits = HashSet::new();
-    loop {
-        let mut tmp_value = 0;
+pub fn add_binary(a: String, b: String) -> String {
+    let a_base10: u32 = u32::from_str_radix(&a, 2).unwrap_or(0);
+    let b_base10: u32 = u32::from_str_radix(&b, 2).unwrap_or(0);
 
-        while n > 0 {
-            let digit = n % 10;
-            tmp_value += digit * digit;
-            n /= 10;
-        }
-
-        if tmp_value == 1 {
-            return true;
-        }
-
-        if memo_digits.contains(&tmp_value) {
-            return false;
-        }
-
-        memo_digits.insert(tmp_value);
-
-        n = tmp_value;
-    }
+    format!("{:b}",  a_base10 + b_base10)
 }
