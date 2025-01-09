@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 fn main() {
     assert_eq!(
         is_anagram("anagram".to_string(), "nagaram".to_string()),
@@ -14,12 +16,26 @@ pub fn is_anagram(s: String, t: String) -> bool {
         return false;
     }
 
-    let mut s_array: Vec<char> = s.chars().collect();
-    let mut t_array: Vec<char> = t.chars().collect();
+    let mut memo_anagram: HashMap<char, i32> = HashMap::new();
 
-    s_array.sort();
-    t_array.sort();
+    for char in s.chars() {
+        memo_anagram
+            .entry(char)
+            .and_modify(|count| *count += 1)
+            .or_insert(1);
+    }
 
-   s_array == t_array
+    for char in t.chars() {
+        match memo_anagram.get_mut(&char) {
+            Some(count) => {
+                *count -= 1;
+                if *count == 0 {
+                    memo_anagram.remove(&char);
+                }
+            }
+            None => return false,
+        }
+    }
+
+    memo_anagram.is_empty()
 }
-
