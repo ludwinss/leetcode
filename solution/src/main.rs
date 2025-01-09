@@ -1,22 +1,25 @@
 fn main() {
     assert_eq!(
-        is_palindrome("A man, a plan, a canal: Panama".to_string()),
+        is_anagram("anagram".to_string(), "nagaram".to_string()),
         true
     );
-    assert_eq!(is_palindrome("race a car".to_string()), false);
-    assert_eq!(is_palindrome("".to_string()), true);
-    assert_eq!(is_palindrome("0P".to_string()), false);
-
+    assert_eq!(is_anagram("rat".to_string(), "car".to_string()), false);
+    assert_eq!(is_anagram("a".to_string(), "ab".to_string()), false);
+    assert_eq!(is_anagram("".to_string(), "".to_string()), true);
     println!("All test passed!");
 }
 
-pub fn is_palindrome(s: String) -> bool {
-    let low_palindrome = s.to_lowercase();
+pub fn is_anagram(s: String, t: String) -> bool {
+    if s.len() != t.len() {
+        return false;
+    }
 
-    let without_spaces = low_palindrome
-        .chars()
-        .filter(|char| char.is_alphanumeric())
-        .map(|char| char.to_ascii_lowercase());
+    let mut s_array: Vec<char> = s.chars().collect();
+    let mut t_array: Vec<char> = t.chars().collect();
 
-    without_spaces.clone().eq(without_spaces.rev())
+    s_array.sort();
+    t_array.sort();
+
+   s_array == t_array
 }
+
