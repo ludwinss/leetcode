@@ -1,41 +1,39 @@
-use std::collections::HashMap;
-
 fn main() {
-    assert_eq!(
-        is_anagram("anagram".to_string(), "nagaram".to_string()),
-        true
-    );
-    assert_eq!(is_anagram("rat".to_string(), "car".to_string()), false);
-    assert_eq!(is_anagram("a".to_string(), "ab".to_string()), false);
-    assert_eq!(is_anagram("".to_string(), "".to_string()), true);
+    assert_eq!(is_power_of_two(1), true);
+    assert_eq!(is_power_of_two(16), true);
+    assert_eq!(is_power_of_two(3), false);
     println!("All test passed!");
 }
 
-pub fn is_anagram(s: String, t: String) -> bool {
-    if s.len() != t.len() {
+pub fn is_power_of_two(n: i32) -> bool {
+    if n == 1 {
+        return true;
+    }
+
+    if n % 2 !=0 {
         return false;
     }
 
-    let mut memo_anagram: HashMap<char, i32> = HashMap::new();
+    let mut left = 0;
+    let mut right = n;
 
-    for char in s.chars() {
-        memo_anagram
-            .entry(char)
-            .and_modify(|count| *count += 1)
-            .or_insert(1);
-    }
+    while left <= right {
+        let mid: i32 = left + (right - left)/2;
 
-    for char in t.chars() {
-        match memo_anagram.get_mut(&char) {
-            Some(count) => {
-                *count -= 1;
-                if *count == 0 {
-                    memo_anagram.remove(&char);
-                }
-            }
-            None => return false,
+        let pow_value = (2 as u32).pow(mid as u32) as i32;
+
+        if n.abs() == pow_value {
+            return true;
         }
+
+        if pow_value > n.abs() {
+            right = mid -1;
+        } else {
+            left = mid +1;
+        }
+
+        println!("{:?}, {:?}", left, right);
     }
 
-    memo_anagram.is_empty()
+    false
 }
