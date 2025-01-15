@@ -1,19 +1,23 @@
+use std::collections::HashMap;
+
 fn main() {
-    assert_eq!(is_ugly(1), true);
-    assert_eq!(is_ugly(6), true);
-    assert_eq!(is_ugly(14), false);
+    assert_eq!(single_number(vec![1, 2, 3, 1, 3]), 2);
+    assert_eq!(single_number(vec![1, 1, 5, 3, 3, 5, 4]), 4);
     println!("All test passed!");
 }
 
-pub fn is_ugly(mut n: i32) -> bool {
-    if n <= 0 {
-        return false;
+pub fn single_number(nums: Vec<i32>) -> i32 {
+    let mut memoization: HashMap<i32, i32> = HashMap::new();
+
+    for digit in &nums {
+        *memoization.entry(*digit).or_insert(0) += 1;
     }
 
-    for factor in [5, 3, 2] {
-        while n % factor == 0 {
-            n /= factor;
+    for (digit, value) in &memoization {
+        if *value == 1 {
+            return *digit;
         }
     }
-    n == 1
+
+    0
 }
