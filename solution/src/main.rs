@@ -7,17 +7,8 @@ fn main() {
 }
 
 pub fn find_max_consecutive_ones(nums: Vec<i32>) -> i32 {
-    let mut max = 0;
-    let mut count = 0;
-
-    for num in nums {
-        if num == 1 {
-            count += 1;
-            max = max.max(count);
-        } else {
-            count = 0;
-        }
-    }
-
-    max
+    nums.iter().fold((0, 0), |(count, mx), next| match next {
+        1 => (count + 1, mx.max(count + 1)),
+        _ => (0, mx),
+    }).1
 }
