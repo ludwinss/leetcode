@@ -1,14 +1,19 @@
 fn main() {
-    assert_eq!(find_max_consecutive_ones(vec![1, 0, 1, 0, 0, 1, 1, 1]), 3);
-    assert_eq!(find_max_consecutive_ones(vec![1, 1, 1, 0, 0, 1]), 3);
-    assert_eq!(find_max_consecutive_ones(vec![0, 1, 1, 0, 0, 1]), 2);
-    assert_eq!(find_max_consecutive_ones(vec![0, 0, 1, 1, 0, 1]), 2);
+    assert_eq!(max_power("abbbcccddddd".to_string()), 5);
+    assert_eq!(max_power("leetcode".to_string()), 2);
+    assert_eq!(max_power("quefuecausagaaa".to_string()), 3);
+    assert_eq!(max_power("tourist".to_string()), 1);
     println!("All test passed!");
 }
 
-pub fn find_max_consecutive_ones(nums: Vec<i32>) -> i32 {
-    nums.iter().fold((0, 0), |(count, mx), next| match next {
-        1 => (count + 1, mx.max(count + 1)),
-        _ => (0, mx),
-    }).1
+pub fn max_power(s: String) -> i32 {
+    s.chars()
+        .fold((0, 1, None), |(count, mx, last_value), next| {
+            if Some(next) == last_value {
+                (count + 1, mx.max(count + 1), Some(next))
+            } else {
+                (1, mx, Some(next))
+            }
+        })
+        .1 as i32
 }
