@@ -1,19 +1,25 @@
+use std::collections::HashMap;
+
 fn main() {
-    assert_eq!(max_power("abbbcccddddd".to_string()), 5);
-    assert_eq!(max_power("leetcode".to_string()), 2);
-    assert_eq!(max_power("quefuecausagaaa".to_string()), 3);
-    assert_eq!(max_power("tourist".to_string()), 1);
+    let input = vec![2, 2, 3, 2];
+    assert_eq!(single_number(input), 3);
+
+    let input = vec![0, 1, 0, 1, 0, 1, 99];
+    assert_eq!(single_number(input), 99);
+
     println!("All test passed!");
 }
 
-pub fn max_power(s: String) -> i32 {
-    s.chars()
-        .fold((0, 1, None), |(count, mx, last_value), next| {
-            if Some(next) == last_value {
-                (count + 1, mx.max(count + 1), Some(next))
-            } else {
-                (1, mx, Some(next))
-            }
-        })
-        .1 as i32
+pub fn single_number(nums: Vec<i32>) -> i32 {
+    let mut hash_number: HashMap<i32, i32> = HashMap::new();
+
+    for num in &nums {
+        *hash_number.entry(*num).or_insert(0) += 1;
+    }
+
+    *hash_number
+        .iter()
+        .find(|(_, &value)| value == 1)
+        .map(|(value, _)| value)
+        .unwrap_or(&0)
 }
