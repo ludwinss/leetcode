@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 fn main() {
     let input = vec![2, 2, 3, 2];
     assert_eq!(single_number(input), 3);
@@ -11,15 +9,11 @@ fn main() {
 }
 
 pub fn single_number(nums: Vec<i32>) -> i32 {
-    let mut hash_number: HashMap<i32, i32> = HashMap::new();
-
+    let mut input1 = 0;
+    let mut input2 = 0;
     for num in &nums {
-        *hash_number.entry(*num).or_insert(0) += 1;
+        input1 = (input1 ^ num) & !input2;
+        input2 = (input2 ^ num) & !input1;
     }
-
-    *hash_number
-        .iter()
-        .find(|(_, &value)| value == 1)
-        .map(|(value, _)| value)
-        .unwrap_or(&0)
+    input1
 }
