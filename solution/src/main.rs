@@ -8,19 +8,16 @@ fn main() {
     println!("All test passed!");
 }
 
-pub fn max_ice_cream(costs: Vec<i32>, coins: i32) -> i32 {
-    let mut cost_mut = costs.clone();
-    cost_mut.sort();
+pub fn max_ice_cream(mut costs: Vec<i32>, coins: i32) -> i32 {
+    costs.sort_unstable();
 
-    let (mut count, mut sum) = (0, 0);
-
-    for &cost in cost_mut.iter() {
-        if sum + cost <= coins {
-            count += 1;
-            sum += cost;
-        } else {
-            break;
-        }
-    }
-    count
+    costs
+        .iter()
+        .scan(coins, |remaining_coins, &next_value| {
+            (*remaining_coins >= next_value).then(|| {
+                *remaining_coins -= next_value;
+                1
+            })
+        })
+        .sum()
 }
