@@ -1,52 +1,44 @@
-use std::cmp::{max, min};
+use std::collections::HashMap;
 
 fn main() {
-    let example = String::from("aaaaabbc");
-    assert_eq!(max_difference(example), 3);
+    assert_eq!(max_profit(vec![7, 1, 5, 3, 6, 4]), 5);
 
-    let example = String::from("abcabcab");
-    assert_eq!(max_difference(example), 1);
-
-    let example = String::from("aabbbc");
-    assert_eq!(max_difference(example), 1);
-
-    let example = String::from("aaaab");
-    assert_eq!(max_difference(example), -3);
-
-    let example = String::from("aabbc");
-    assert_eq!(max_difference(example), -1);
-
-    let example = String::from("aaabbc");
-    assert_eq!(max_difference(example), 1);
-
-    let example = String::from("zzzzxxxyyy");
-    assert_eq!(max_difference(example), -1);
+    assert_eq!(max_profit(vec![7, 6, 4, 3, 1]), 0);
 
     println!("All test passed!");
 }
 
-pub fn max_difference(s: String) -> i32 {
-    let mut vector_s: Vec<i32> = vec![0; 26];
-    let a = b'a';
-
-    s.as_bytes()
-        .iter()
-        .for_each(|&char| vector_s[(char - a) as usize] += 1);
-
-    let mut odd = 0;
-    let mut even = i32::MAX;
-
-    for &value in &vector_s {
-        if value % 2 == 1 {
-            odd = max(odd, value);
-        } else if value != 0 {
-            even = min(even, value);
+pub fn max_profit(prices: Vec<i32>) -> i32 {
+    fn stock(
+        idx: usize,
+        can_buy: u8,
+        prices: &Vec<i32>,
+        memo: &mut HashMap<(usize, u8), i32>,
+    ) -> i32 {
+        if idx == prices.len() {
+            return 0;
         }
+
+        if let Some(&value) = memo.get(&(idx, can_buy)) {
+            return value;
+        }
+
+        let ans = if can_buy == 1 {
+            let skip = stock(idx + 1, 1, prices, memo);
+            let buy = stock(idx + 1, 0, prices, memo) - prices[idx];
+            skip.max(buy)
+        } else {
+            let skip = stock(idx + 1, 0, prices, memo);
+            let sell = prices[idx];
+            skip.max(sell)
+        };
+
+        memo.insert((idx, can_buy), ans);
+
+        ans
     }
 
-    if even == i32::MAX {
-        odd
-    } else {
-        odd - even
-    }
+    let mut memo = HashMap::new();
+
+    stock(0, 1, &prices, &mut memo)
 }
