@@ -1,35 +1,46 @@
 fn main() {
-    let mut a = vec![2, 0, 2, 1, 1, 0];
-    sort_colors(&mut a);
-    assert_eq!(a, vec![0, 0, 1, 1, 2, 2]);
+    assert_eq!(
+        vowel_strings(
+            vec!["are".to_string(), "amy".to_string(), "u".to_string(),],
+            0,
+            2
+        ),
+        2
+    );
 
-    let mut b = vec![2, 0, 1];
-    sort_colors(&mut b);
-    assert_eq!(b, vec![0, 1, 2]);
+    assert_eq!(
+        vowel_strings(
+            vec![
+                "hey".to_string(),
+                "aeo".to_string(),
+                "mu".to_string(),
+                "ooo".to_string(),
+                "artro".to_string(),
+            ],
+            1,
+            4
+        ),
+        3
+    );
 
     println!("All tests passed!");
 }
 
-pub fn sort_colors(nums: &mut Vec<i32>) {
-    const K: usize = 3;
-
-    let mut counts = [0usize; K];
-
-    for &value in nums.iter() {
-        counts[value as usize] += 1;
+pub fn vowel_strings(words: Vec<String>, left: i32, right: i32) -> i32 {
+    fn is_vowel(test: char) -> bool {
+        matches!(test, 'a' | 'e' | 'i' | 'o' | 'u')
     }
 
-    for i in 1..K {
-        counts[i] += counts[i - 1];
-    }
+    words[(left as usize)..=(right as usize)]
+        .iter()
+        .filter(|word| {
+            let mut chars_words = word.chars();
 
-    let mut output = vec![0; nums.len()];
-
-    for &x in nums.iter().rev() {
-        counts[x as usize] -= 1;
-
-        output[counts[x as usize]] = x;
-    }
-
-    nums.copy_from_slice(&output);
+            match (chars_words.next(), chars_words.next_back()) {
+                (Some(l), Some(r)) => is_vowel(l) && is_vowel(r),
+                (Some(l), None) => is_vowel(l),
+                _ => false,
+            }
+        })
+        .count() as i32
 }
