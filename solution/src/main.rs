@@ -1,46 +1,61 @@
-fn main() {
-    assert_eq!(
-        vowel_strings(
-            vec!["are".to_string(), "amy".to_string(), "u".to_string(),],
-            0,
-            2
-        ),
-        2
-    );
+use std::cmp::Ordering;
 
-    assert_eq!(
-        vowel_strings(
-            vec![
-                "hey".to_string(),
-                "aeo".to_string(),
-                "mu".to_string(),
-                "ooo".to_string(),
-                "artro".to_string(),
-            ],
-            1,
-            4
-        ),
-        3
-    );
+fn main() {
+    assert_eq!(longest_monotonic_subarray(vec![1, 4, 3, 3, 2]), 2);
+
+    assert_eq!(longest_monotonic_subarray(vec![3, 3, 3, 3]), 1);
+
+    assert_eq!(longest_monotonic_subarray(vec![3, 2, 1]), 3);
+
+    assert_eq!(longest_monotonic_subarray(vec![1, 4, 3, 3, 2]), 2);
+    assert_eq!(longest_monotonic_subarray(vec![3, 3, 3, 3]), 1);
+    assert_eq!(longest_monotonic_subarray(vec![3, 2, 1]), 3);
+
+    assert_eq!(longest_monotonic_subarray(vec![1]), 1);
+    assert_eq!(longest_monotonic_subarray(vec![1, 2]), 2);
+    assert_eq!(longest_monotonic_subarray(vec![2, 1]), 2);
+    assert_eq!(longest_monotonic_subarray(vec![1, 1]), 1);
+
+    assert_eq!(longest_monotonic_subarray(vec![1, 2, 3, 2, 1]), 3);
+    assert_eq!(longest_monotonic_subarray(vec![1, 2, 3, 4, 5]), 5);
+    assert_eq!(longest_monotonic_subarray(vec![5, 4, 3, 2, 1]), 5);
+    assert_eq!(longest_monotonic_subarray(vec![1, 2, 2, 3, 4]), 3);
+    assert_eq!(longest_monotonic_subarray(vec![10, 9, 8, 8, 7, 6]), 3);
+
+    assert_eq!(longest_monotonic_subarray(vec![1, 3, 2, 4, 6, 5, 4]), 3);
+    assert_eq!(longest_monotonic_subarray(vec![1, 5, 9, 2, 3, 4, 1]), 3);
+    assert_eq!(longest_monotonic_subarray(vec![5, 6, 5, 6, 5, 6, 5]), 2);
+
+    assert_eq!(longest_monotonic_subarray(vec![2, 2, 2, 1, 2]), 2);
+    assert_eq!(longest_monotonic_subarray(vec![1, 3, 3, 2, 2, 1]), 2);
+
+    assert_eq!(longest_monotonic_subarray((1..=50).collect()), 50);
+    assert_eq!(longest_monotonic_subarray((1..=50).rev().collect()), 50);
 
     println!("All tests passed!");
 }
 
-pub fn vowel_strings(words: Vec<String>, left: i32, right: i32) -> i32 {
-    fn is_vowel(test: char) -> bool {
-        matches!(test, 'a' | 'e' | 'i' | 'o' | 'u')
+pub fn longest_monotonic_subarray(nums: Vec<i32>) -> i32 {
+    let (mut dec, mut inc, mut best) = (1, 1, 1);
+
+    for tuple in nums.windows(2) {
+        match tuple[0].cmp(&tuple[1]) {
+            Ordering::Equal => {
+                inc = 1;
+                dec = 1;
+            }
+            Ordering::Greater => {
+                inc = 1;
+                dec += 1;
+            }
+            Ordering::Less => {
+                inc += 1;
+                dec = 1;
+            }
+        }
+
+        best = best.max(dec.max(inc));
     }
 
-    words[(left as usize)..=(right as usize)]
-        .iter()
-        .filter(|word| {
-            let mut chars_words = word.chars();
-
-            match (chars_words.next(), chars_words.next_back()) {
-                (Some(l), Some(r)) => is_vowel(l) && is_vowel(r),
-                (Some(l), None) => is_vowel(l),
-                _ => false,
-            }
-        })
-        .count() as i32
+    best
 }
