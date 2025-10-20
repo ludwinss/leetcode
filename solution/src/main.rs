@@ -1,61 +1,45 @@
-use std::cmp::Ordering;
-
 fn main() {
-    assert_eq!(longest_monotonic_subarray(vec![1, 4, 3, 3, 2]), 2);
+    assert_eq!(maximum_tastiness(vec![13, 5, 1, 8, 21, 2], 3), 8);
 
-    assert_eq!(longest_monotonic_subarray(vec![3, 3, 3, 3]), 1);
+    assert_eq!(maximum_tastiness(vec![1, 3, 1], 2), 2);
 
-    assert_eq!(longest_monotonic_subarray(vec![3, 2, 1]), 3);
-
-    assert_eq!(longest_monotonic_subarray(vec![1, 4, 3, 3, 2]), 2);
-    assert_eq!(longest_monotonic_subarray(vec![3, 3, 3, 3]), 1);
-    assert_eq!(longest_monotonic_subarray(vec![3, 2, 1]), 3);
-
-    assert_eq!(longest_monotonic_subarray(vec![1]), 1);
-    assert_eq!(longest_monotonic_subarray(vec![1, 2]), 2);
-    assert_eq!(longest_monotonic_subarray(vec![2, 1]), 2);
-    assert_eq!(longest_monotonic_subarray(vec![1, 1]), 1);
-
-    assert_eq!(longest_monotonic_subarray(vec![1, 2, 3, 2, 1]), 3);
-    assert_eq!(longest_monotonic_subarray(vec![1, 2, 3, 4, 5]), 5);
-    assert_eq!(longest_monotonic_subarray(vec![5, 4, 3, 2, 1]), 5);
-    assert_eq!(longest_monotonic_subarray(vec![1, 2, 2, 3, 4]), 3);
-    assert_eq!(longest_monotonic_subarray(vec![10, 9, 8, 8, 7, 6]), 3);
-
-    assert_eq!(longest_monotonic_subarray(vec![1, 3, 2, 4, 6, 5, 4]), 3);
-    assert_eq!(longest_monotonic_subarray(vec![1, 5, 9, 2, 3, 4, 1]), 3);
-    assert_eq!(longest_monotonic_subarray(vec![5, 6, 5, 6, 5, 6, 5]), 2);
-
-    assert_eq!(longest_monotonic_subarray(vec![2, 2, 2, 1, 2]), 2);
-    assert_eq!(longest_monotonic_subarray(vec![1, 3, 3, 2, 2, 1]), 2);
-
-    assert_eq!(longest_monotonic_subarray((1..=50).collect()), 50);
-    assert_eq!(longest_monotonic_subarray((1..=50).rev().collect()), 50);
+    assert_eq!(maximum_tastiness(vec![7, 7, 7, 7], 2), 0);
 
     println!("All tests passed!");
 }
 
-pub fn longest_monotonic_subarray(nums: Vec<i32>) -> i32 {
-    let (mut dec, mut inc, mut best) = (1, 1, 1);
+pub fn maximum_tastiness(mut price: Vec<i32>, k: i32) -> i32 {
+    price.sort();
 
-    for tuple in nums.windows(2) {
-        match tuple[0].cmp(&tuple[1]) {
-            Ordering::Equal => {
-                inc = 1;
-                dec = 1;
-            }
-            Ordering::Greater => {
-                inc = 1;
-                dec += 1;
-            }
-            Ordering::Less => {
-                inc += 1;
-                dec = 1;
+    fn is_candidate(value_expect: i32, input: &[i32], k: i32) -> bool {
+        let mut taken = 1;
+        let mut last = input[0];
+
+        for &value in input.iter().skip(1) {
+            if value - last >= value_expect {
+                taken += 1;
+                last = value;
+                if taken >= k {
+                    return true;
+                }
             }
         }
 
-        best = best.max(dec.max(inc));
+        false
     }
 
-    best
+    let mut low = 0;
+    let mut high = price[price.len() - 1] - price[0];
+
+    while low < high {
+        let mid = (low + high + 1) / 2;
+
+        if is_candidate(mid, &price, k) {
+            low = mid;
+        } else {
+            high = mid - 1;
+        }
+    }
+
+    low
 }
