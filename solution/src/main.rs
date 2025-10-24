@@ -1,33 +1,23 @@
 fn main() {
-    assert_eq!(max_diff(555), 888);
-
-    assert_eq!(max_diff(9), 8);
-
-    assert_eq!(max_diff(123456), 820000);
-
+    assert_eq!(number_of_cuts(1), 0);
+    assert_eq!(number_of_cuts(2), 1);
+    assert_eq!(number_of_cuts(3), 3);
+    assert_eq!(number_of_cuts(4), 2);
+    assert_eq!(number_of_cuts(5), 5);
+    assert_eq!(number_of_cuts(6), 3);
+    assert_eq!(number_of_cuts(7), 7);
+    assert_eq!(number_of_cuts(8), 4);
+    assert_eq!(number_of_cuts(10), 5);
+    assert_eq!(number_of_cuts(100), 50);
     println!("All tests passed!");
 }
 
-pub fn max_diff(num: i32) -> i32 {
-    let num_str = num.to_string();
-
-    let max_num = num_str
-        .chars()
-        .find(|&c| c != '9')
-        .map_or(num_str.clone(), |c| num_str.replace(c, "9"));
-
-    let first_value = num_str.chars().next().unwrap();
-
-    let min_num = if first_value != '1' {
-        num_str.replace(first_value, "1")
-    } else {
-        match num_str.chars().skip(1).find(|&c| c != '0' && c != '1') {
-            Some(from) => num_str.replace(from, "0"),
-            None => num_str.clone(),
-        }
-    };
-
-    println!("{} {}", max_num, min_num);
-
-    max_num.parse::<i32>().unwrap() - min_num.parse::<i32>().unwrap()
+pub fn number_of_cuts(n: i32) -> i32 {
+    if n == 1 {
+        return 0;
+    }
+    match n % 2 {
+        0 => n / 2,
+        _ => n,
+    }
 }
