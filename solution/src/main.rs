@@ -1,32 +1,28 @@
-use std::collections::HashMap;
-
 fn main() {
-    assert_eq!(climb_stairs(1), 1);
-    assert_eq!(climb_stairs(2), 2);
-    assert_eq!(climb_stairs(3), 3);
-    assert_eq!(climb_stairs(4), 5);
+    assert_eq!(fib(1), 1);
+    assert_eq!(fib(2), 1);
+    assert_eq!(fib(3), 2);
+    assert_eq!(fib(4), 3);
+    assert_eq!(fib(5), 5);
     println!("All tests passed!");
 }
 
-pub fn climb_stairs(n: i32) -> i32 {
-    let mut memo: HashMap<i32, i32> = HashMap::new();
-
-    fn dn(n: i32, memo: &mut HashMap<i32, i32>) -> i32 {
-        if n <= 2 {
-            return n;
-        }
-
-        if let Some(memoized) = memo.get(&n) {
-            return *memoized;
-        }
-
-        let n_1 = dn(n - 1, memo);
-        let n_2 = dn(n - 2, memo);
-
-        let sum = n_1 + n_2;
-        memo.insert(n, sum);
-
-        sum
+pub fn fib(n: i32) -> i32 {
+    if n == 0 {
+        return 0;
     }
-    dn(n, &mut memo)
+    if n <= 2 {
+        return 1;
+    }
+
+    let (mut prev, mut next) = (1, 2);
+
+    for _ in 3..n {
+        let curr = prev + next;
+
+        prev = next;
+        next = curr;
+    }
+
+    next
 }
