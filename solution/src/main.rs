@@ -1,28 +1,27 @@
 fn main() {
-    assert_eq!(fib(1), 1);
-    assert_eq!(fib(2), 1);
-    assert_eq!(fib(3), 2);
-    assert_eq!(fib(4), 3);
-    assert_eq!(fib(5), 5);
+    assert_eq!(maximum_or(vec![12, 9], 1), 30);
+    assert_eq!(maximum_or(vec![8, 1, 2], 2), 35);
     println!("All tests passed!");
 }
 
-pub fn fib(n: i32) -> i32 {
-    if n == 0 {
-        return 0;
-    }
-    if n <= 2 {
-        return 1;
-    }
+pub fn maximum_or(nums: Vec<i32>, k: i32) -> i64 {
+    let len: usize = nums.len();
+    let nums_parsed: Vec<i64> = nums.iter().map(|&a| a as i64).collect();
 
-    let (mut prev, mut next) = (1, 2);
+    //GREEDY CALC
+    let mut prefix: Vec<i64> = vec![0i64; len + 1];
+    let mut sufix: Vec<i64> = vec![0i64; len + 1];
 
-    for _ in 3..n {
-        let curr = prev + next;
-
-        prev = next;
-        next = curr;
+    for index in 1..=len {
+        prefix[index] = prefix[index - 1] | nums_parsed[index - 1];
     }
 
-    next
+    for index in (0..len).rev() {
+        sufix[index] = sufix[index + 1] | nums_parsed[index];
+    }
+
+    (0..len)
+        .map(|index| prefix[index] | sufix[index + 1] | nums_parsed[index] << k)
+        .max()
+        .unwrap()
 }
