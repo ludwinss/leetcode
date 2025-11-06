@@ -1,47 +1,34 @@
 fn main() {
-    assert_eq!(
-        hardest_worker(10, vec![vec![0, 2], vec![2, 5], vec![0, 9], vec![1, 15]]),
-        1
-    );
-    assert_eq!(
-        hardest_worker(26, vec![vec![1, 1], vec![3, 7], vec![2, 12], vec![7, 17]]),
-        3
-    );
-    assert_eq!(hardest_worker(2, vec![vec![0, 10], vec![1, 10]]), 0);
-
-    assert_eq!(
-        hardest_worker(
-            70,
-            vec![
-                vec![36, 3],
-                vec![1, 5],
-                vec![12, 8],
-                vec![25, 9],
-                vec![53, 11],
-                vec![29, 12],
-                vec![52, 14]
-            ]
-        ),
-        12
-    );
+    assert_eq!(champagne_tower(1, 1, 1), 0.00000);
+    assert_eq!(champagne_tower(2, 1, 1), 0.50000);
+    assert_eq!(champagne_tower(100000009, 33, 17), 1.00000);
     println!("All tests passed!");
 }
+pub fn champagne_tower(poured: i32, query_row: i32, query_glass: i32) -> f64 {
+    use std::collections::HashMap;
 
-pub fn hardest_worker(_: i32, logs: Vec<Vec<i32>>) -> i32 {
-    let mut max_time = i32::MIN;
-    let mut prev_time = 0;
-    let mut result_id = logs[0][0];
-
-    for log in logs {
-        let [id, time] = log.try_into().unwrap();
-        let duration = time - prev_time;
-
-        if duration > max_time || (duration == max_time && id < result_id) {
-            max_time = duration;
-            result_id = id;
+    fn calc(row: i32, col: i32, memo: &mut HashMap<(i32, i32), f64>, poured: f64) -> f64 {
+        if col < 0 || col > row {
+            return 0.0;
         }
-        prev_time = time;
+
+        if row == 0 && col == 0 {
+            return poured;
+        }
+
+        if let Some(&value) = memo.get(&(row, col)) {
+            return value;
+        }
+
+        let left = ((calc(row - 1, col - 1, memo, poured) - 1.0) / 2.0).max(0.0);
+        let right = ((calc(row - 1, col, memo, poured) - 1.0) / 2.0).max(0.0);
+
+        let result = left + right;
+        memo.insert((row, col), result);
+        result
     }
 
-    result_id
+    let mut memo = HashMap::new();
+    let value = calc(query_row, query_glass, &mut memo, poured as f64);
+    value.min(1.0)
 }
