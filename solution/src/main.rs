@@ -1,14 +1,25 @@
 fn main() {
-    assert_eq!(arithmetic_triplets(vec![0, 1, 4, 6, 7, 10], 3), 2);
-    assert_eq!(arithmetic_triplets(vec![4, 5, 6, 7, 8, 9], 2), 2);
+    assert_eq!(digit_sum("11111222223".to_string(), 3), "135");
+    assert_eq!(digit_sum("00000000".to_string(), 3), "000");
     println!("All tests passed!");
 }
 
-pub fn arithmetic_triplets(nums: Vec<i32>, diff: i32) -> i32 {
-    use std::collections::HashSet;
-    let memo: HashSet<i32> = nums.iter().copied().collect();
+pub fn digit_sum(mut s: String, k: i32) -> String {
+    let k: usize = k as usize;
 
-    nums.iter()
-        .filter(|value| memo.contains(&(*value + diff)) && memo.contains(&(*value + (diff * 2))))
-        .count() as i32
+    while s.len() > k {
+        s = s
+            .as_bytes()
+            .chunks(k)
+            .map(|chunks| {
+                chunks
+                    .iter()
+                    .map(|b| (b - b'0') as u32)
+                    .sum::<u32>()
+                    .to_string()
+            })
+            .collect();
+    }
+
+    s
 }
