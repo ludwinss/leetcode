@@ -1,25 +1,17 @@
 fn main() {
-    assert_eq!(digit_sum("11111222223".to_string(), 3), "135");
-    assert_eq!(digit_sum("00000000".to_string(), 3), "000");
+    assert_eq!(average(vec![4000, 3000, 1000, 2000]), 2500.0);
+    assert_eq!(average(vec![1000, 2000, 3000]), 2000.0);
     println!("All tests passed!");
 }
 
-pub fn digit_sum(mut s: String, k: i32) -> String {
-    let k: usize = k as usize;
+pub fn average(salary: Vec<i32>) -> f64 {
+    let (mut max, mut min, mut sum): (i32, i32, i32) = (i32::MIN, i32::MAX, 0);
 
-    while s.len() > k {
-        s = s
-            .as_bytes()
-            .chunks(k)
-            .map(|chunks| {
-                chunks
-                    .iter()
-                    .map(|b| (b - b'0') as u32)
-                    .sum::<u32>()
-                    .to_string()
-            })
-            .collect();
+    for value in &salary {
+        sum += value;
+        max = max.max(*value);
+        min = min.min(*value);
     }
 
-    s
+    (sum - max - min) as f64 / (salary.len() - 2) as f64
 }
