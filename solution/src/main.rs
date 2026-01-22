@@ -1,33 +1,37 @@
 fn main() {
-    assert_eq!(max_diff(555), 888);
+    assert_eq!(max_capacity(vec![4, 8, 5, 3], vec![1, 5, 7, 2], 8), 8);
 
-    assert_eq!(max_diff(9), 8);
-
-    assert_eq!(max_diff(123456), 820000);
+    assert_eq!(max_capacity(vec![3, 5, 7, 4], vec![2, 4, 3, 6], 5), 6);
 
     println!("All tests passed!");
 }
 
-pub fn max_diff(num: i32) -> i32 {
-    let num_str = num.to_string();
+pub fn max_capacity(costs: Vec<i32>, capacity: Vec<i32>, budget: i32) -> i32 {
+    let mut mapped: Vec<(&i32, i32)> = costs.iter().zip(capacity).map(|slc| slc).collect();
+    mapped.sort_unstable_by_key(|a| *a);
 
-    let max_num = num_str
-        .chars()
-        .find(|&c| c != '9')
-        .map_or(num_str.clone(), |c| num_str.replace(c, "9"));
+    let mut left = 0;
+    let mut right = mapped.len() - 1;
 
-    let first_value = num_str.chars().next().unwrap();
+    let mut best = 0;
 
-    let min_num = if first_value != '1' {
-        num_str.replace(first_value, "1")
-    } else {
-        match num_str.chars().skip(1).find(|&c| c != '0' && c != '1') {
-            Some(from) => num_str.replace(from, "0"),
-            None => num_str.clone(),
+    while left < right {
+        let middle = left + (right - left) / 2;
+
+        let value = (mapped[middle].0 + mapped[middle].1) as i32;
+        println!("{:?}", value);
+        if value > budget as i32 {
+            best = value;
         }
-    };
 
-    println!("{} {}", max_num, min_num);
+        if (middle as i32) < value {
+            left = right - left / 2 + 1;
+        } else {
+            right = right - left / 2 - 1;
+        }
+    }
 
-    max_num.parse::<i32>().unwrap() - min_num.parse::<i32>().unwrap()
+    print!("{:?}", best);
+
+    0
 }
